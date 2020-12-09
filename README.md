@@ -2,7 +2,7 @@
 
 # App Scaffold
 
-##Aplicación Erpco ADO, Requisitos y como correr
+##Aplicación Coppel, Requisitos y como correr
 1. Instalar dependencias corriendo `npm install`
 2. Se necesita como requisito lo siguiente para que pueda correr la aplicación
 ```
