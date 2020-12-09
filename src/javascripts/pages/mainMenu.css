@@ -1,0 +1,524 @@
+/* Archivo CSS de la aplicación */
+#app {
+  overflow-x: hidden;
+}
+
+.folioContainer {
+  display: flex;
+  width: 95%;
+  background-color: #f3f3f3;
+  padding: 5px;
+  padding-left: 10px;
+  flex-direction: column;
+  color: #46474c;
+}
+
+p,
+b,
+span {
+  font-size: smaller;
+}
+
+input{
+  height: auto !important;
+}
+.m-elem{
+  margin-bottom: 1rem;
+}
+
+/* 
+.folioContainer .title {
+  font-size: 16px;
+  margin: 0;
+}
+
+.folioContainer .title span,
+.folioContainer .title p {
+  font-size: 16px;
+}
+
+.folioContainer .marca {
+  font-style: italic;
+  font-weight: 300;
+  margin: 0.5em 0 0 0;
+}
+
+
+.tripContainer,
+.paymentContainer {
+  display: flex;
+  width: 100%;
+  margin: 1em 0;
+  color: #46474c;
+  flex-direction: column;
+}
+
+.tripContainer .originDestination {
+  display: flex;
+  font-weight: bold;
+  margin: 0;
+}
+
+.tripContainer .hours,
+.paymentContainer .hours {
+  margin: 0;
+}
+
+
+.tripContainer .hours span,
+.paymentContainer .hours span {
+  font-weight: 500;
+  margin: 0;
+}
+
+.updateTicketButton {
+  background: #d80012;
+  padding: 10px;
+  border-radius: 5px;
+  color: #ffffff;
+}
+
+.clearSearchButton {
+  background: grey;
+  margin-left: 2.5em;
+  padding: 10px;
+  border-radius: 5px;
+  color: #ffffff;
+}
+
+
+.radio-container {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+} */
+
+/* Hide the browser's default radio button */
+.radio-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.radio-container:hover input~.checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.radio-container input:checked~.checkmark {
+  background-color: #d80012;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.radio-container input:checked~.checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.radio-container .checkmark:after {
+  top: 6px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+
+.folioSearchContainer input {
+  width: 300px;
+}
+
+.is-disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.row-container {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  color: #46474c;
+}
+
+
+.column-12 {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.column-6 {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+}
+
+.column-3 {
+  display: flex;
+  width: 25%;
+  flex-direction: column;
+}
+
+.column-4 {
+  display: flex;
+  width: 33.33%;
+  flex-direction: column;
+}
+
+.column-2 {
+  display: flex;
+  width: 16.6667%;
+  flex-direction: column;
+}
+
+.column-1 {
+  display: flex;
+  width: 8.333%;
+  flex-direction: column;
+}
+
+.alertContainer {
+  display: flex;
+  width: 90%;
+  padding: 5px;
+  padding-left: 10px;
+  flex-direction: column;
+  border: 1px;
+  border-color: black;
+  color: #46474c;
+}
+
+.margin-top-small {
+  margin-top: 1em;
+}
+
+.margin-top-normal {
+  margin-top: 1.5em;
+}
+
+.divider {
+  position: relative;
+  display: inline-block;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  border: 0.5px solid lightgray;
+  border-top: 0px;
+}
+
+.left {
+  position: relative;
+  grid-row: 1;
+}
+
+.right {
+  grid-row: 2;
+  text-align: right;
+  width: 100%;
+}
+
+.code {
+  color: #144A75;
+  font-weight: bold;
+}
+
+.right>div {
+  /* padding: 4px; */
+  /* display: inline; */
+  /* transform: translate(0px -15px); */
+}
+
+.shadowbox {
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 4px 10px;
+  margin-bottom: 3px;
+}
+
+.c1 {
+  flex: 8.3333%;
+}
+
+.c2 {
+  flex: 16.6666%;
+}
+
+.c3 {
+  flex: 25%;
+}
+
+.c4 {
+  flex: 33.33333%;
+}
+
+.c5 {
+  flex: 41.6666;
+}
+
+.c6 {
+  flex: 50%;
+}
+
+.c7 {
+  flex: 58.3333%;
+}
+
+.c8 {
+  flex: 66.66666%;
+}
+
+.c9 {
+  flex: 75%;
+}
+
+.c10 {
+  flex: 83.3333%;
+}
+
+.c11 {
+  flex: 91.666666%;
+}
+
+.c12 {
+  flex: 100%;
+}
+
+.lowImpact {
+  color: grey;
+}
+
+.lowImpact.time {
+  font-size: 13px;
+}
+
+.lowImpact b {
+  font-size: initial;
+}
+
+.orange-status {
+  color: #ef7d00;
+  font-weight: bold;
+
+}
+
+.green-status {
+  color: #228F67;
+  font-weight: bold;
+
+}
+
+.red-status {
+  color: #CC3340;
+  font-weight: bold;
+
+}
+
+.yellow-status {
+  color: #a89c2c;
+  font-weight: bold;
+
+}
+
+.blue-status {
+  color: #1F73B7;
+  font-weight: bold;
+
+}
+
+.black-status {
+  color: #000000;
+  font-weight: bold;
+
+}
+
+.section {
+  margin: 10px 0px;
+}
+
+.section h5 {
+  margin-bottom: 3px;
+}
+
+.consigment {
+  padding: 8px;
+  margin-bottom: 3px;
+}
+
+.consigment p {
+  font-size: 0.9em;
+}
+
+/* 
+Esto no esta Bien */
+.down {
+  height: 100%;
+  width: 100%;
+  display: block !important;
+  margin-top: 29px;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+.collapsed .fa-angle-up {
+  transform: rotate(180deg);
+  margin-left: 5px;
+  /* transform: rotate(180deg) translate(-5px, -1px); */
+  transition: 0.3s;
+}
+
+.fa-angle-up {
+  transition: 0.3s;
+  margin-left: 5px;
+
+  /* transform: translate(5px, 0); */
+
+}
+
+.center {
+  text-align: center;
+}
+
+.nobreak {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.red {
+  background-color: #d80012;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.name {
+  text-transform: capitalize;
+  font-size: 1.125rem;
+  color: #2F3941;
+}
+
+.lower {
+  padding-top: 5px;
+}
+
+.card-body {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.separator {
+  width: 100%;
+  height: 10px;
+}
+
+.deliveryPlace {
+  text-transform: capitalize;
+}
+
+.tight-height {
+  line-height: 1;
+  display: block;
+}
+
+.c-callout--recessed {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+
+.hidden {
+  display: none;
+}
+
+#loader {
+  margin-top: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+p {
+  font-size: 0.875rem;
+  color: #2F3941;
+}
+
+.wallet {
+  margin-bottom: 0.5rem;
+  color: #87929D;
+}
+
+.h6, h6,.grey {
+  font-size: 0.75rem;
+  margin-bottom: .1rem;
+  color: #87929D;
+}
+.c-callout {
+  line-height: 1.42857;
+  color: #68737d;
+  font-size: 0.875em;
+}
+.c-callout--recessed {
+  padding: 3px !important;
+}
+.detail{
+  margin-top: 13px;
+}
+.product span{
+  font-size: 1.02em;
+}
+.product span.tight-height{
+  font-size: 1em
+}
+.c-tag--lg {
+  height: 18px !important;
+}
+.grey svg {
+  margin-right: 5px;
+}
+.c-tag--blue.blue-600{
+  background-color: #1F73B7!important;
+}
+.c-tag--green.green-600{
+  background-color: #228f67!important;
+}
+.c-tag--red.red-600{
+  background-color: #CC3340!important;
+}
+.line-through{
+  text-decoration: line-through;
+}

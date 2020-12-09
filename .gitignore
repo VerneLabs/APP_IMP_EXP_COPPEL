@@ -1,0 +1,24 @@
+node_modules
+bower_components
+dist/assets/index.html
+dist/assets/main.css
+dist/assets/main.css.map
+dist/assets/main.js
+dist/assets/main.js.map
+dist/translations/
+dist/tmp/
+dist_test/tmp/
+# dist/manifest.json
+dist/.zat
+.DS_Store
+
+#dist/assets/
+
+package-lock.json
+
+package.json
+
+
+
+src/.zat
+.zat
