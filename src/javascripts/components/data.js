@@ -33,7 +33,7 @@ class Data extends Component {
       selectedLayout: 0,
       selectedLayoutForm: 0,
       csvHeader: [],
-      prod: true,
+      prod: false,
     }
 
   }
@@ -434,17 +434,7 @@ modalShow(file){
         <div>
 
 
-          <div className='c-callout c-callout--warning' hidden={this.state.firstAlertHide}>
-          <strong className='c-callout__title'>
-            {/* <span dir='ltr'>Recuerda que:</span> */}
-          </strong>
-          <p className='c-callout__paragraph'>
-            La actualización de tickets requiere que la aplicación se encuentre 
-            abierta. Si cierras la aplicación se perderán los datos o procesos
-            que estén en ejecución.
-          </p>
-        </div>
-        <br></br>
+         
         <div id="modal"></div>
 
 
