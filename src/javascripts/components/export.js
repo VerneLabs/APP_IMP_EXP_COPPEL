@@ -11,7 +11,7 @@ import Layouts_ids_test from '../../../dist/assets/catalogs/layouts_fields_ids_t
 import sendTicketsZendesk from '../../utils/sendsTicketsZendesk';
 import userDataZendesk from '../../utils/userDataZendesk';
 import searchZendesk from '../../utils/searchZendesk';
-import {Field, Label, Radio, Input} from '@zendeskgarden/react-forms';
+import {Field, Label, Radio, Input, Checkbox} from '@zendeskgarden/react-forms';
 import '@zendeskgarden/react-theming';
 import '@zendeskgarden/css-callouts';
 import '@zendeskgarden/css-forms';
@@ -41,10 +41,11 @@ class Export extends Component {
       selectedLayoutForm: 0,
       csvHeader: [],
       prod: false,
-      step: 1,
+      step: 0,
       exportTypeButtonHidden:true,
       showNullValues : false,
-      isCompact: false
+      isCompact: false,
+      secondSectionHide: true
     }
 
   }
@@ -469,6 +470,9 @@ class Export extends Component {
     let query= new Object;
 
     query.type = this.state.radioValue;
+    query.init_date = moment(this.state.initDate).format("YYYY-MM-DD");
+    query.end_date = moment(this.state.endDate).format("YYYY-MM-DD");
+
 
     let datos = await searchZendesk(query, this.props.client, 0)
 
@@ -507,7 +511,7 @@ for (var key in datos) {
             }
           }
           
-            console.log("midata",datos[key][data]);
+            // console.log("midata",datos[key][data]);
             // datos[key][`${data}.prueba`] = "Hi";
 
           delete datos[key][data];
@@ -517,21 +521,55 @@ for (var key in datos) {
     values.push(datos[key]);
   }
 }
-console.log("aja el valor es",values);
-console.log("type 2",typeof(values));
 
+      if(values.length==0){
+        console.error("Criterios sin data");
+        <div className='c-callout c-callout--warning'>
+          <strong className='c-callout__title'>
+            {/* <span dir='ltr'>Recuerda que:</span> */}
+            No existe data dentro de los criterios seleccionados
+          </strong>
+          <p className='c-callout__paragraph'>
+            Por favor cambia los filtros e intenta nuevamente
+          </p>
+        </div>
+          ,document.getElementById("errors");
+      }else{
+        ReactDOM.render(
+          <CSVDownload data={values} target="_blank" filename={"my-file.csv"} />
+          ,document.getElementById("alerts"));
+      }
 
-
-    // ReactDOM.render(
-    // <CSVDownload data={values} target="_blank" filename={"my-file.csv"} />
-    // ,document.getElementById("alerts"));
+  
 
   }
 
-  setInitTime(time){
-    console.log(moment);
+  setNullValues(e){
+    console.log(e);
+    let prevValue =this.state.showNullValues;
 
-    console.log(time);
+    console.log(prevValue);
+    prevValue == false? this.setState({showNullValues:true}) : this.setState({showNullValues:false})
+  }
+
+  setDatesValues(date, method){
+    let initDate = Boolean(this.state.initDate);
+   let endDate = Boolean(this.state.endDate);
+   method == 0 ? (this.setState({initDate : date}), initDate = true): (this.setState({endDate : date}), endDate= true);
+   
+    if(Boolean(initDate)&& Boolean(endDate)){
+      this.setState({secondSectionHide:false})
+    }
+  }
+
+  
+  formatDate(e){
+     let date = new Intl.DateTimeFormat('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
+    });
+    return date.format(e);
   }
 
   render() {
@@ -593,92 +631,38 @@ console.log("type 2",typeof(values));
                     <Stepper.Step key="step-2">
                       <Stepper.Label>Filtros</Stepper.Label>
                       <Stepper.Content>
+                      <h5>Campos Nulos</h5>
+                        Si seleccionas la siguiente opción todos los campos nulos serán importados en el csv, de lo contrario solo los campos con valores
+                          <hr></hr>
+                      <Field>
+                        <Checkbox checked={this.state.showNullValues} onChange={(e) => this.setNullValues(e)}>
+                          <Label>Incluir campos nulos</Label>
+                        </Checkbox>
+                      </Field>
+                      <br></br>
+                      <hr></hr>
+                      <hr></hr>
                         <h5>Rango de creación</h5>
                         Bajo que criterios deseas que se filtren los {this.translateName(this.state.radioValue)}
                           <hr></hr>
+                              <Field>
+                              <Label>Fecha inicio de creación</Label>
+                              <Datepicker value={this.state.initDate} onChange={selectedDate => {this.setDatesValues(selectedDate, 0)}} style={{ maxWidth: 200 }} formatDate={date => this.formatDate(date)} isCompact={true}>
+                                <Input />
+                              </Datepicker>
+                          </Field>
+                       
+                       
+                          
                           <Field>
-    <Label>Example datepicker</Label>
-    <Datepicker value={new Date()} onChange={selectedDate => this.setInitTime(selectedDate)}>
-      <Input />
-    </Datepicker>
-  </Field>
+                            <Label>Fecha fin de creación</Label>
+                            <Datepicker value={this.state.endDate} onChange={selectedDate => {this.setDatesValues(selectedDate, 1)}} formatDate={date => this.formatDate(date)}>
+                              <Input />
+                            </Datepicker>
+                          </Field>
 
-
-
-
-
-
-
-
-
-
-
-  {/* <DatepickerRange
-      // startValue={startValue}
-      // endValue={endValue}
-      // onChange={changes => {
-      //   changes.startValue && setStartValue(changes.startValue);
-      //   changes.endValue && setEndValue(changes.endValue);
-      // }}
-      // isCompact={isCompact}
-    >
-      <Row justifyContent="center" 
-      style={{ minWidth: this.state.isCompact ? 488 : 600 }}
-      >
-        <Col 
-        // style={{ maxWidth: calendarRangeWidth }}
-        >
-          <Row>
-            <Col>
-              <Field>
-                <Label>Start</Label>
-                <DatepickerRange.Start>
-                  <Input 
-                  // isCompact={isCompact} 
-                  />
-                </DatepickerRange.Start>
-              </Field>
-            </Col>
-            <Col>
-              <Field>
-                <Label>End</Label>
-                <DatepickerRange.End>
-                  <Input
-                   isCompact={this.state.isCompact} validation={isInvalid() ? 'error' : undefined} 
-                   />
-                </DatepickerRange.End>
-                {/* {isInvalid() && (
-                  <Message validation="error">End date must occur after the start date</Message>
-                )} 
-              </Field>
-            </Col>
-          </Row>
-
-            <Col>
-              <DatepickerRange.Calendar />
-            </Col>
-
-        </Col>
-      </Row>
-    </DatepickerRange> */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        <div className="buttonContainer">
+                        <br></br>
+                        <div className="buttonContainer" hidden={this.state.secondSectionHide}>
                           <Button isDanger onClick={() => this.onPrev()}>Volver</Button>
                           <span> </span>
                           <Button isPrimary onClick={() => this.onNext()}>Siguiente</Button>
@@ -689,8 +673,17 @@ console.log("type 2",typeof(values));
                       <Stepper.Label>Finalizar</Stepper.Label>
                       <Stepper.Content>
                         Por ultimo te pedimos que confirmes la seleccion de todo los datos y en el caso de que todo sea correcto selecciones exportar
+                        <hr></hr>
+                        <br></br>
+                        Tipo : {this.translateName(this.state.radioValue)}
+                        <br></br>
+                        Incluyendo valores nulos: {this.state.showNullValues?"Si":"No"}
+                        <br></br>
+                        Desde el {moment(this.state.initDate).format("DD/MM/YYYY")} hasta el {moment(this.state.endDate).format("DD/MM/YYYY")}
+                        <br></br>
                         <div className="buttonContainer">
                           <Button isDanger onClick={() => this.onPrev()}>Volver</Button>
+                          <span></span>
                           <span></span>
                           <Button isPrimary onClick={() => this.exportAction()}>
                     Exportar
@@ -699,17 +692,14 @@ console.log("type 2",typeof(values));
                       </Stepper.Content>
                     </Stepper.Step>
                   </Stepper>
-              
-
-                  <Button
+                  {/* <Button
                     isPrimary
-                    disabled={disableButton}
-                    hidden={disableButton}
-                    onClick={() => this.handlerProcessFile()}></Button>
+                    onClick={() => (console.log(this.state))}>State</Button> */}
+
+                
 
 
-
- 
+                <div id="errors"></div>
 
                 </div>
                 <br></br>
@@ -740,7 +730,7 @@ console.log("type 2",typeof(values));
                   </div>
 
                   {loader}
-                  <div id="alerts"></div>
+                  <div id="alerts">hola</div>
 
                 </div>
               </Col>
