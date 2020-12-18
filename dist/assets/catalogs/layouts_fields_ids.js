@@ -13,6 +13,7 @@ module.exports = {
   //status: es el valor que permite darle status al ticket, no importa si dice true o false, siempre que aparezca este valor ira al status
   1: {
     label: 'Incidencias',
+    type: 'tickets',
     1: {
       num_usr: true,
       description: 'nro de usuairo'
@@ -48,6 +49,7 @@ module.exports = {
   },
   2: {
     label: 'Base de bloqueos',
+    type: 'tickets',
     ticket_form_id: 360000866432,
     status: 'new',
     4: {
@@ -63,6 +65,7 @@ module.exports = {
   },
   3: {
     label: 'Layout de cargos automaticos',
+    type: 'tickets',
     1: {
       val: 360031220692,
       description: 'nro orden'
@@ -73,6 +76,94 @@ module.exports = {
     7: {
       val: 360031220672,
       description: 'Monto'
+    }
+  },
+  4: {
+    label: 'Creacion de organizaciones',
+    type: 'organizations',
+    2: {
+      val: 'id_tienda_mirakl'
+    },
+    3: {
+      org_name: true
+    },
+    9: {
+      val: 'correo_contacto_principal',
+      description: 'Contacto'
+    },
+    88: {
+      val: 'curp',
+      description: 'Curp del representatne legal'
+    }
+    ,
+    89: {
+      val: 'nombre_representante_legal',
+      description: 'Nombre representante'
+    }
+    ,
+    90: {
+      val: 'apellido_representante_legal',
+      description: 'Nombre representante'
+    }
+    ,
+    91: {
+      val: 'mail_del_representate_legal',
+      description: 'corero electronico creo representante'
+    }
+    ,
+    92: {
+      val: 'telefono_rl',
+      description: 'telefono representante'
+    }
+    ,
+    93: {
+      val: 'telefono_oficina',
+      description: 'telefono secundario representante'
+    }
+    ,
+    94: {
+      val: 'direccion',
+      description: 'calle'
+    }
+    // ,
+    // 94: {
+    //   // val: 'curp',
+    //   description: 'numero exterior'
+    // }
+    // ,
+    // 95: {
+    //   // val: 'curp',
+    //   description: 'numero interior'
+    // }
+    ,
+    97: {
+      val: 'colonia',
+      description: 'colonia'
+    }
+    ,
+    98: {
+      val: 'municipio',
+      description: 'Delegacion o municipio'
+    }
+    ,
+    99: {
+      val: 'ubicacion_estado',
+      description: 'estado'
+    }
+    ,
+    100: {
+      val: 'zip',
+      description: 'codigo postal'
+    }
+    // ,
+    // 99: {
+    //   // val: 'curp',
+    //   description: 'Horario de atencion'
+    // }
+    ,
+    102: {
+      val: 'paqueteria_asignada',
+      description: 'Transportista predeterminado'
     }
   }
 }

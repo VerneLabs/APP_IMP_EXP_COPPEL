@@ -504,7 +504,8 @@ for (var key in datos) {
               datos[key][`${data}.${arrElement[elementKey].id}`] = arrElement[elementKey].value;
 
             }else{
-              if(arrElement[elementKey].value){
+              
+              if(arrElement[elementKey] && arrElement[elementKey].value){
                 // console.log(2);
                 datos[key][`${data}.${arrElement[elementKey].id}`] = arrElement[elementKey].value;
               }
@@ -623,6 +624,15 @@ for (var key in datos) {
                             <Label>Ususarios</Label>
                           </Radio>
                         </Field>
+                        <Field>
+                          <Radio
+                            name="default example"
+                            value="organization"
+                            checked={this.state.radioValue === 'organization'}
+                            onChange={event => this.setRadioValue(event.target.value)}>
+                            <Label>Organizaciones</Label>
+                          </Radio>
+                        </Field>
                         <div className="buttonContainer">
                           <Button isPrimary hidden={this.state.exportTypeButtonHidden} onClick={() => this.onNext()}>Siguiente</Button>
                         </div>
@@ -706,7 +716,7 @@ for (var key in datos) {
               </Col>
               <hr></hr>
 
-              <Col md={8} textAlign={"center"}>
+              <Col md={8} textAlign={"center"} hidden={true}>
                 <div className='c-callout u-p-sm '>
                   <p className='u-m-xs'>Notificaciones</p>
                   <hr></hr>
@@ -730,7 +740,7 @@ for (var key in datos) {
                   </div>
 
                   {loader}
-                  <div id="alerts">hola</div>
+                  <div id="alerts"></div>
 
                 </div>
               </Col>

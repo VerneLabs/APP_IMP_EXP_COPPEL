@@ -9,6 +9,7 @@ import Loader from './loader';
 import Layouts_ids from '../../../dist/assets/catalogs/layouts_fields_ids';
 import Layouts_ids_test from '../../../dist/assets/catalogs/layouts_fields_ids_tests';
 import sendTicketsZendesk from '../../utils/sendsTicketsZendesk';
+import sendOrganizationsZendesk from '../../utils/sendOrganizationsZendesk';
 import userDataZendesk from '../../utils/userDataZendesk';
 import '@zendeskgarden/react-theming';
 import '@zendeskgarden/css-callouts';
@@ -33,7 +34,8 @@ class Data extends Component {
       selectedLayout: 0,
       selectedLayoutForm: 0,
       csvHeader: [],
-      prod: false,
+      prod: true,
+      type: ""
     }
 
   }
@@ -149,10 +151,12 @@ class Data extends Component {
 
 executeFile(file){
   //Ejecuta el codigo que segmenta los tickets
+  
   Papa.parse(file, {
     header: true,
     dynamicTyping: true,
     complete: (results) => {
+      console.log("este es el valor de results", results)
       this.bulks = utils.chunkArray(results.data, 50)
       this.setState({bulksTotal: this.bulks.length,firstAlertHide: false, csvHeader : results.meta['fields']})
       this.processData();
@@ -162,6 +166,9 @@ executeFile(file){
 }
 
   async processData() {
+
+
+
     var new_this = this;
     let {countNotification} = this.state
     this.setState({loading: true, show: false})
@@ -197,58 +204,101 @@ executeFile(file){
       let assignee_id = "";
       let ticket_form_id = ""; 
       let header = this.state.csvHeader;
+      let type = "";
+      let org_name="";
+
+      
+
       await Promise.all(propertyValues.map( async (element, index) => {
       let resp = await this.convertToTheRealData(this.state.selectedLayout, index+1, element)
 
         if (resp != null) {
+          // resp.type == 0 && (type = resp.val);
           resp.type == 1 && customfields.push(resp.val);
           resp.type == 2 && (status = resp.val);
           resp.type == 3 && (requester_id = resp.val.value);
           resp.type == 5 && (assignee_id = resp.val.value);
+          resp.type == 6 && (org_name= resp.val.value);
         }
+
         dataForComment = dataForComment + "\n" + header[index] +": "+ element;
     }));
 
-      if(status){
-        status = this.newStatus(status.value);}
-        else{
-        let defaultStatus = this.getGenericStatus(this.state.selectedLayout);
-        if(defaultStatus){
-          status = defaultStatus;
-        }else{
-          status = "closed"
+      type = this.getGenerictype(this.state.selectedLayout);
+      this.setState({type})
+
+      let ticket_obj;
+      console.log("el type es: ", type)
+      if(type=="tickets"){
+        console.log("151 Entre a set Tickets ");
+
+        if(status){
+          status = this.newStatus(status.value);}
+          else{
+          let defaultStatus = this.getGenericStatus(this.state.selectedLayout);
+          if(defaultStatus){
+            status = defaultStatus;
+          }else{
+            status = "closed"
+          }
+        }
+
+
+        let processName = this.getProcessName(this.state.selectedLayout);
+        if(propertyValues[0] != null){
+          console.log(propertyValues);
+          console.log(typeof(propertyValues[0]));
+          if((typeof(propertyValues[0])!="number" && propertyValues[0].trim()!="")||propertyValues.length !=1){
+
+          ticket_obj = {
+            subject: processName,
+            comment: {
+              "body": "Ticket creado por medio de app de importación" + dataForComment,
+              "is_public": false
+            },
+            custom_fields: customfields
+          };
+          ticket_obj.group_id = this.getGroupId(this.state.selectedLayout);
+          ticket_obj.status = status;
+          ticket_form_id = this.getProcessForm(this.state.selectedLayout);
+          (ticket_form_id!= ""&&ticket_form_id !=null )&& (ticket_obj.ticket_form_id = ticket_form_id);
+          requester_id != "" && (ticket_obj.requester_id = requester_id);
+          assignee_id != "" && (ticket_obj.assignee_id = assignee_id);
         }
       }
+      }else if(type=="organizations"){
+        console.log("151 Entre a set organizacion ");
+        let newCustom= new Object;
+        // for(var val in customfields){
+        //   console.log("val", val );
+        //   newCustom[val.id] = val.value
+        // }
+        customfields.forEach(val => {
+          newCustom[val.id] = val.value
+        });
 
-
-      let processName = this.getProcessName(this.state.selectedLayout);
-      if(propertyValues[0] != null){
-        console.log(propertyValues);
-        console.log(typeof(propertyValues[0]));
-        if((typeof(propertyValues[0])!="number" && propertyValues[0].trim()!="")||propertyValues.length !=1){
-
-        let ticket_obj = {
-          subject: processName,
-          comment: {
-            "body": "Ticket creado por medio de app de importación" + dataForComment,
-            "is_public": false
-          },
-          custom_fields: customfields
+        ticket_obj = {
+          name: org_name,
+         
+          organization_fields: newCustom
         };
+        console.log("customFields",newCustom);
+      }else{
+        console.log("151 Bueno no entre a ninguno")
+      }
+
         ticket_obj.tags= ["app_imp"];
-        ticket_obj.group_id = this.getGroupId(this.state.selectedLayout);
-        ticket_obj.status = status;
-        ticket_form_id = this.getProcessForm(this.state.selectedLayout);
-        (ticket_form_id!= ""&&ticket_form_id !=null )&& (ticket_obj.ticket_form_id = ticket_form_id);
-        requester_id != "" && (ticket_obj.requester_id = requester_id);
-        assignee_id != "" && (ticket_obj.assignee_id = assignee_id);
         allTicketsUpdate.push(ticket_obj);
         
-      }
-    }
+    
       })).then(function() {
         const {client} = new_this.state;
-        sendTicketsZendesk(allTicketsUpdate, client);
+        console.warn("valor a enviar",new_this.state.type, allTicketsUpdate);
+        if(new_this.state.type == "tickets"){
+          sendTicketsZendesk(allTicketsUpdate, client);
+        }else if(new_this.state.type == "organizations"){
+          sendOrganizationsZendesk(allTicketsUpdate, client);
+        }
         countNotification += 1
         new_this.setState({countNotification})
     
@@ -303,6 +353,15 @@ executeFile(file){
 
     const {client} = this.props;
     let layouts = this.setProdOrTestLayouts();
+    // if (layouts[method][this_counter].type) {
+    //   return {
+    //     type: 0,
+    //     val: {
+    //       id: layouts[method][this_counter].val,
+    //       value: value
+    //     }
+    //   }
+    // }else
     if (layouts[method][this_counter] != null) {
       if (layouts[method][this_counter].val) {
         return {
@@ -315,6 +374,14 @@ executeFile(file){
       } else if (layouts[method][this_counter].status) {
         return {
           type: 2,
+          val: {
+            id: layouts[method][this_counter].val,
+            value: value
+          }
+        };
+      }else if (layouts[method][this_counter].org_name) {
+        return {
+          type: 6,
           val: {
             id: layouts[method][this_counter].val,
             value: value
@@ -368,6 +435,14 @@ executeFile(file){
     let layouts = this.setProdOrTestLayouts();
     if (layouts[method].status) {
       return layouts[method].status;
+    } else {
+      return null;
+    }
+  }
+  getGenerictype(method) {
+    let layouts = this.setProdOrTestLayouts();
+    if (layouts[method].type) {
+      return layouts[method].type;
     } else {
       return null;
     }
