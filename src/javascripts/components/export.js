@@ -22,6 +22,7 @@ import { Datepicker, DatepickerRange } from '@zendeskgarden/react-datepickers';
 import moment from 'moment';
 
 import {Modal, Header, Body, Footer, FooterItem} from '@zendeskgarden/react-modals';
+import { element } from "prop-types";
 
 class Export extends Component {
   constructor(props) {
@@ -508,13 +509,18 @@ for (var key in datos) {
               if(arrElement[elementKey] && arrElement[elementKey].value){
                 // console.log(2);
                 datos[key][`${data}.${arrElement[elementKey].id}`] = arrElement[elementKey].value;
+              }else{
+                // console.log("ultimo valor",elementKey, arrElement[elementKey]);
+                datos[key][`${data}.${elementKey}`] = arrElement[elementKey];
+
               }
+              // console.log("element Key: ",arrElement,elementKey)
             }
           }
           
             // console.log("midata",datos[key][data]);
             // datos[key][`${data}.prueba`] = "Hi";
-
+          // console.log("datos a ver: ",datos[key] ,datos[key][data])
           delete datos[key][data];
         }
       }
