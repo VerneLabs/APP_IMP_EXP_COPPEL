@@ -11,74 +11,98 @@ module.exports = {
   //num_usr:  nos proporciona el external Id del usuario, el cual nos permite agregarlo como solicitante del ticket
   //num_agent:  nos proporciona el external Id del usuario, el cual nos permita agregarlo como agente del ticket
   //status: es el valor que permite darle status al ticket, no importa si dice true o false, siempre que aparezca este valor ira al status
-  1: {
-    label: 'Incidencias',
-    type: 'tickets',
-    1: {
-      num_usr: true,
-      description: 'nro de usuairo'
+  
+  // 1: {
+  //   label: 'Creacion de organizaciones',
+  //   type: 'organizations',
+  //   2: {
+  //     val: 'id_tienda_mirakl'
+  //   },
+  //   3: {
+  //     org_name: true
+  //   },
+  //   // 4: {
+  //   //   val: 'estatus_de_tienda',
+  //   //   description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
+  //   // },
 
-    },
-    2: {
-      val: 360031299651,
-      description: 'puntos de contacto'
-    },
-    3: {
-      val: 360031299651,
-      description: 'Canal de atencion'
-    },
-    5: {
-      val: 360031367111,
-      description: 'Tipos de consultas'
-    },
-    6: {
-      val: 360031304071,
-      description: 'Descripcion de hecho'
-    },
-    7: {
-      status: true
-    },
-    8: {
-      val: 360031299971,
-      description: 'nro de bicicleta'
-    },
-    9: {
-      val: 360031300171,
-      description: 'ubicacion de bicicleta'
-    }
-  },
-  2: {
-    label: 'Base de bloqueos',
-    type: 'tickets',
-    ticket_form_id: 360000866432,
-    status: 'new',
-    4: {
-      num_usr: true
-    },
-    5: {
-      val: 360031220652,
-      description: 'Tarjeta'
-    },
-    7: {
-      group: true
-    }
-  },
-  3: {
-    label: 'Layout de cargos automaticos',
-    type: 'tickets',
-    1: {
-      val: 360031220692,
-      description: 'nro orden'
-    },
-    4: {
-      status: true
-    },
-    7: {
-      val: 360031220672,
-      description: 'Monto'
-    }
-  },
-  4: {
+  //   // DATO INCORRECTO------------------
+  //   // 9: {
+  //     //   val: 'correo_contacto_principal',
+  //     //   description: 'Contacto principal'
+  //     // },
+  //   // DATO INCORRECTO------------------
+  //   88: {
+  //     val: 'curp',
+  //     description: 'Curp del representatne legal'
+  //   }
+  //   ,
+  //   89: {
+  //     val: 'nombre_contacto_principal',
+  //     description: 'Nombre Contacto principal'
+  //   }
+  //   ,
+  //   91: {
+  //     val: 'correo_contacto_principal',
+  //     description: 'corero electronico BODEGA'
+  //   }
+  //   //FALTA INFO --------------------------
+  //   // xs: {
+  //     //   val: 'razon_social',
+  //     //   description: 'Razon social'
+  //     // }
+  //   //FALTA INFO --------------------------
+
+  //   //FALTA INFO --------------------------
+  //   // xs: {
+  //     //   val: 'rfc',
+  //     //   description: 'rfc'
+  //     // }
+  //   //FALTA INFO --------------------------
+  //   ,
+  //   92: {
+  //     val: 'telefono_contacto_principal',
+  //     description: 'telefono representante'
+  //   }
+  //   ,
+  //   93: {
+  //     val: 'telefono_oficina',
+  //     description: 'telefono secundario representante'
+  //   }
+  //   ,
+  //   94: {
+  //     val: 'direccion',
+  //     description: 'calle'
+  //   }
+  //   ,
+  //   97: {
+  //     val: 'colonia',
+  //     description: 'colonia'
+  //   }
+  //   ,
+  //   98: {
+  //     val: 'municipio',
+  //     description: 'Delegacion o municipio'
+  //   }
+  //   ,
+  //   99: {
+  //     val: 'ubicacion_estado',
+  //     description: 'estado'
+  //   }
+  //   ,
+  //   100: {
+  //     val: 'zip',
+  //     description: 'codigo postal'
+  //   }
+  //   ,
+  //   // 102: {
+  //   //   val: 'paqueteria_asignada',
+  //   //   description: 'NECESITA TRADUCCIONES ---   Transportista predeterminado - FedEx = fedex, DHL= dhl'
+  //   // }
+
+
+    /// Ultimo Layout--------------------------
+  1: {
     label: 'Creacion de organizaciones',
     type: 'organizations',
     2: {
@@ -87,83 +111,80 @@ module.exports = {
     3: {
       org_name: true
     },
-    9: {
-      val: 'correo_contacto_principal',
-      description: 'Contacto'
-    },
-    88: {
+    // 4: {
+    //   val: 'estatus_de_tienda',
+    //   description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
+    // },
+
+
+    
+    5: {
       val: 'curp',
       description: 'Curp del representatne legal'
     }
     ,
-    89: {
-      val: 'nombre_representante_legal',
-      description: 'Nombre representante'
+    // 6: {
+    //   val: 'paqueteria_asignada',
+    //   description: 'NECESITA TRADUCCIONES ---   Transportista predeterminado - FedEx = fedex, DHL= dhl'
+    // }
+    // ,
+    
+    7: {
+      val: 'nombre_contacto_principal',
+      description: 'Nombre Contacto principal'
     }
     ,
-    90: {
-      val: 'apellido_representante_legal',
-      description: 'Nombre representante'
-    }
+    8: {
+      val: 'correo_contacto_principal',
+      description: 'corero electronico BODEGA'
+    },
+
+    9: {
+        val: 'razon_social',
+        description: 'Razon social'
+      },
+
+
+
+    10: {
+        val: 'rfc',
+        description: 'rfc'
+      }
+
     ,
-    91: {
-      val: 'mail_del_representate_legal',
-      description: 'corero electronico creo representante'
-    }
-    ,
-    92: {
-      val: 'telefono_rl',
+    11: {
+      val: 'telefono_contacto_principal',
       description: 'telefono representante'
     }
     ,
-    93: {
+    12: {
       val: 'telefono_oficina',
       description: 'telefono secundario representante'
     }
     ,
-    94: {
+    13: {
       val: 'direccion',
       description: 'calle'
     }
-    // ,
-    // 94: {
-    //   // val: 'curp',
-    //   description: 'numero exterior'
-    // }
-    // ,
-    // 95: {
-    //   // val: 'curp',
-    //   description: 'numero interior'
-    // }
     ,
-    97: {
-      val: 'colonia',
-      description: 'colonia'
-    }
-    ,
-    98: {
-      val: 'municipio',
-      description: 'Delegacion o municipio'
-    }
-    ,
-    99: {
+    14: {
       val: 'ubicacion_estado',
       description: 'estado'
     }
     ,
-    100: {
+    15: {
+      val: 'colonia',
+      description: 'colonia'
+    }
+    ,
+    16: {
+      val: 'municipio',
+      description: 'Delegacion o municipio'
+    }
+    ,
+    17: {
       val: 'zip',
       description: 'codigo postal'
-    }
-    // ,
-    // 99: {
-    //   // val: 'curp',
-    //   description: 'Horario de atencion'
-    // }
-    ,
-    102: {
-      val: 'paqueteria_asignada',
-      description: 'Transportista predeterminado'
     }
   }
 }
