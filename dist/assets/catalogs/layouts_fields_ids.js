@@ -111,10 +111,10 @@ module.exports = {
     3: {
       org_name: true
     },
-    // 4: {
-    //   val: 'estatus_de_tienda',
-    //   description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
-    // },
+    4: {
+      val: 'estatus_de_tienda',
+      description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
+    },
 
 
     
@@ -123,11 +123,11 @@ module.exports = {
       description: 'Curp del representatne legal'
     }
     ,
-    // 6: {
-    //   val: 'paqueteria_asignada',
-    //   description: 'NECESITA TRADUCCIONES ---   Transportista predeterminado - FedEx = fedex, DHL= dhl'
-    // }
-    // ,
+    6: {
+      val: 'paqueteria_asignada',
+      description: 'NECESITA TRADUCCIONES ---   Transportista predeterminado - FedEx = fedex, DHL= dhl'
+    }
+    ,
     
     7: {
       val: 'nombre_contacto_principal',
