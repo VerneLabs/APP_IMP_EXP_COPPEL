@@ -105,87 +105,28 @@ module.exports = {
   1: {
     label: 'Creacion de organizaciones',
     type: 'organizations',
-    2: {
-      val: 'id_tienda_mirakl'
-    },
-    3: {
+    1: {
       org_name: true
-    },
-    4: {
-      val: 'estatus_de_tienda',
-      description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
-    },
+    }
+    // ,
+    // 4: {
+    //   val: 'estatus_de_tienda',
+    //   description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
+    // },
 
+  },
+  2: {
+    label: 'Creacion de tickets',
+    type: 'tickets',
+    1: {
+      org_name: true
+    }
+    // ,
+    // 4: {
+    //   val: 'estatus_de_tienda',
+    //   description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
+    // },
 
-    
-    5: {
-      val: 'curp',
-      description: 'Curp del representatne legal'
-    }
-    ,
-    6: {
-      val: 'paqueteria_asignada',
-      description: 'NECESITA TRADUCCIONES ---   Transportista predeterminado - FedEx = fedex, DHL= dhl'
-    }
-    ,
-    
-    7: {
-      val: 'nombre_contacto_principal',
-      description: 'Nombre Contacto principal'
-    }
-    ,
-    8: {
-      val: 'correo_contacto_principal',
-      description: 'corero electronico BODEGA'
-    },
-
-    9: {
-        val: 'razon_social',
-        description: 'Razon social'
-      },
-
-
-
-    10: {
-        val: 'rfc',
-        description: 'rfc'
-      }
-
-    ,
-    11: {
-      val: 'telefono_contacto_principal',
-      description: 'telefono representante'
-    }
-    ,
-    12: {
-      val: 'telefono_oficina',
-      description: 'telefono secundario representante'
-    }
-    ,
-    13: {
-      val: 'direccion',
-      description: 'calle'
-    }
-    ,
-    14: {
-      val: 'ubicacion_estado',
-      description: 'estado'
-    }
-    ,
-    15: {
-      val: 'colonia',
-      description: 'colonia'
-    }
-    ,
-    16: {
-      val: 'municipio',
-      description: 'Delegacion o municipio'
-    }
-    ,
-    17: {
-      val: 'zip',
-      description: 'codigo postal'
-    }
   }
 }
 export default module;

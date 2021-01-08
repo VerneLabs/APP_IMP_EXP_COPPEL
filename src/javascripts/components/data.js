@@ -233,8 +233,8 @@ executeFile(file){
         console.log("151 Entre a set Tickets ");
 
         if(status){
-          status = this.newStatus(status.value);}
-          else{
+          status = this.newStatus(status.value);
+        }else{
           let defaultStatus = this.getGenericStatus(this.state.selectedLayout);
           if(defaultStatus){
             status = defaultStatus;
@@ -287,8 +287,10 @@ executeFile(file){
         console.log("151 Bueno no entre a ninguno")
       }
 
-        ticket_obj.tags= ["app_imp"];
-        allTicketsUpdate.push(ticket_obj);
+        if(ticket_obj){
+          ticket_obj.tags= ["app_imp"];
+          allTicketsUpdate.push(ticket_obj);
+        }
         
     
       })).then(function() {
