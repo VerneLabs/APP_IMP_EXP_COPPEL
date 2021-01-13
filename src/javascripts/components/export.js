@@ -46,13 +46,15 @@ class Export extends Component {
       exportTypeButtonHidden:true,
       showNullValues : false,
       isCompact: false,
-      secondSectionHide: true
+      secondSectionHide: true,
+      values:[], 
+      loadingButton: true,
+      gotValues : false
     }
 
   }
 
   componentDidMount() {
-    // this.fillDropdown(); console.log("Component mount...");
     let client = this.props.client;
     client.on('pane.deactivated', function () {
       console.log("saliendo de la app");
@@ -241,8 +243,6 @@ class Export extends Component {
 
       let processName = this.getProcessName(this.state.selectedLayout);
       if (propertyValues[0] != null) {
-        console.log(propertyValues);
-        console.log(typeof(propertyValues[0]));
         if ((typeof(propertyValues[0]) != "number" && propertyValues[0].trim() != "") || propertyValues.length != 1) {
 
           let ticket_obj = {
@@ -434,10 +434,12 @@ class Export extends Component {
     }
   }
   onNext() {
-    console.log("Next");
     let step = this.state.step;
     step++;
     this.setState({step})
+    if(step == 2){
+      this.exportAction();
+    }
   }
   onPrev() {
     let step = this.state.step;
@@ -477,17 +479,15 @@ class Export extends Component {
 
     let datos = await searchZendesk(query, this.props.client, 0)
 
-    console.log("esto es lo que tenemos de respuesta de data",datos);
-    console.log("tipo",typeof(datos));
     // var propertyValues = Object.values(datos);
 
     var values = [];
-
+    ReactDOM.render(""
+        ,document.getElementById("errors"));
 for (var key in datos) {
   if (datos.values(key)) {
     for (var data in datos[key]) {
       if(data=="tags"){
-        console.log("este es de los valores tags");
         let tags = datos[key][data].toString();
         datos[key][data] = tags;
 
@@ -498,29 +498,16 @@ for (var key in datos) {
           
           let arrElement = datos[key][data];
           for (var elementKey in arrElement) {
-            // console.log("state", this.state)
             if(this.state.showNullValues){
-              // console.log(1);
-
               datos[key][`${data}.${arrElement[elementKey].id}`] = arrElement[elementKey].value;
-
             }else{
-              
               if(arrElement[elementKey] && arrElement[elementKey].value){
-                // console.log(2);
                 datos[key][`${data}.${arrElement[elementKey].id}`] = arrElement[elementKey].value;
               }else{
-                // console.log("ultimo valor",elementKey, arrElement[elementKey]);
                 datos[key][`${data}.${elementKey}`] = arrElement[elementKey];
-
               }
-              // console.log("element Key: ",arrElement,elementKey)
             }
           }
-          
-            // console.log("midata",datos[key][data]);
-            // datos[key][`${data}.prueba`] = "Hi";
-          // console.log("datos a ver: ",datos[key] ,datos[key][data])
           delete datos[key][data];
         }
       }
@@ -531,6 +518,7 @@ for (var key in datos) {
 
       if(values.length==0){
         console.error("Criterios sin data");
+        ReactDOM.render(
         <div className='c-callout c-callout--warning'>
           <strong className='c-callout__title'>
             {/* <span dir='ltr'>Recuerda que:</span> */}
@@ -540,12 +528,16 @@ for (var key in datos) {
             Por favor cambia los filtros e intenta nuevamente
           </p>
         </div>
-          ,document.getElementById("errors");
+          ,document.getElementById("errors"));
       }else{
-        ReactDOM.render(
-          <CSVDownload data={values} target="_blank" filename={"my-file.csv"} />
-          ,document.getElementById("alerts"));
+        this.setState({values, gotValues: true})
+
+        // ReactDOM.render(
+        //   // <CSVDownload data={values} target="_blank" filename="my-file.csv" />
+        //   <CSVLink data={values}>Download me</CSVLink>
+        //   ,document.getElementById("alerts"));
       }
+      this.setState({loadingButton: false})
 
   
 
@@ -554,8 +546,6 @@ for (var key in datos) {
   setNullValues(e){
     console.log(e);
     let prevValue =this.state.showNullValues;
-
-    console.log(prevValue);
     prevValue == false? this.setState({showNullValues:true}) : this.setState({showNullValues:false})
   }
 
@@ -701,9 +691,11 @@ for (var key in datos) {
                           <Button isDanger onClick={() => this.onPrev()}>Volver</Button>
                           <span></span>
                           <span></span>
-                          <Button isPrimary onClick={() => this.exportAction()}>
-                    Exportar
-                  </Button>
+                          {this.state.loadingButton? <Loader/> :(this.state.gotValues?  <CSVLink data={this.state.values} filename={`${this.state.radioValue}-${moment(this.state.initDate).format("YYYY/MM/DD")}-${moment(this.state.endDate).format("YYYY/MM/DD")}.csv`}>
+                          <Button isPrimary>
+                            Exportar
+                          </Button>
+                          </CSVLink>:"")}
                         </div>
                       </Stepper.Content>
                     </Stepper.Step>
