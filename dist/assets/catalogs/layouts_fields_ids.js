@@ -105,84 +105,75 @@ module.exports = {
   1: {
     label: 'Creacion de organizaciones',
     type: 'organizations',
-    2: {
+    3: {
       val: 'id_tienda_mirakl'
     },
-    3: {
+    4: {
       org_name: true
     },
-    4: {
+    5: {
       val: 'estatus_de_tienda',
       description: 'Necesita traducciones - Es el status de la tienda  Open=Activa, Suspendida=Pausada sin publicaciones, Closed=Cerrada por seller'
     },
-
-
-    
-    5: {
+    6: {
       val: 'curp',
       description: 'Curp del representatne legal'
     }
     ,
-    6: {
+    7: {
       val: 'paqueteria_asignada',
       description: 'NECESITA TRADUCCIONES ---   Transportista predeterminado - FedEx = fedex, DHL= dhl'
     }
     ,
-    
-    7: {
+    8: {
       val: 'nombre_contacto_principal',
       description: 'Nombre Contacto principal'
     }
     ,
-    8: {
+    9: {
       val: 'correo_contacto_principal',
       description: 'corero electronico BODEGA'
     },
-
-    9: {
+    10: {
         val: 'razon_social',
         description: 'Razon social'
       },
-
-
-
-    10: {
+    11: {
         val: 'rfc',
         description: 'rfc'
       }
-
     ,
-    11: {
+    12: {
       val: 'telefono_contacto_principal',
       description: 'telefono representante'
     }
     ,
-    12: {
+    13: {
       val: 'telefono_oficina',
       description: 'telefono secundario representante'
     }
     ,
-    13: {
+    14: {
       val: 'direccion',
       description: 'calle'
     }
     ,
-    14: {
+    15: {
       val: 'ubicacion_estado',
       description: 'estado'
     }
     ,
-    15: {
+    16: {
       val: 'colonia',
       description: 'colonia'
     }
     ,
-    16: {
+    17: {
       val: 'municipio',
       description: 'Delegacion o municipio'
     }
     ,
-    17: {
+    18: {
       val: 'zip',
       description: 'codigo postal'
     }
