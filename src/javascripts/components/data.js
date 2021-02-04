@@ -6,9 +6,8 @@ import {Button} from '@zendeskgarden/react-buttons';
 import {Grid, Row, Col} from '@zendeskgarden/react-grid';
 import { Title,Alert } from '@zendeskgarden/react-notifications'
 import Loader from './loader';
-import Layouts_ids from '../../../dist/assets/catalogs/layouts_fields_ids';
-import Layouts_ids_test from '../../../dist/assets/catalogs/layouts_fields_ids_tests';
 import sendTicketsZendesk from '../../utils/sendsTicketsZendesk';
+import sendOrganizationsZendesk from '../../utils/sendOrganizationsZendesk';
 import userDataZendesk from '../../utils/userDataZendesk';
 import '@zendeskgarden/react-theming';
 import '@zendeskgarden/css-callouts';
@@ -34,6 +33,7 @@ class Data extends Component {
       selectedLayoutForm: 0,
       csvHeader: [],
       prod: true,
+      type: ""
     }
 
   }
@@ -46,12 +46,15 @@ class Data extends Component {
       console.log("saliendo de la app");
     });
   }
-  setProdOrTestLayouts(){
-    if (this.state.prod) {
-      return Layouts_ids;
-    } else {
-      return Layouts_ids_test
-    }
+  async setProdOrTestLayouts(){
+    let client = this.props.client;
+    let metadata = await client.metadata(); //obtiene metadata de configuración de app del manifest.json
+    let baseParams = metadata.settings; //metadata guardado en la variable baseParams
+    let data;
+    let path = String(baseParams.layout);
+    data = await import('../../../dist/assets/catalogs/'+path);
+    // return Layouts_ids;
+    return data
   }
 
   changeSelect(e) {
@@ -134,10 +137,10 @@ class Data extends Component {
     }
   }
 
-  checkIfIsCorrectFile(fileName, selectedLayout){
+  async checkIfIsCorrectFile(fileName, selectedLayout){
 
   // Se revisa si el nombre del archivo tiene nombre parecido a lo que se espera, esto para estar seguro de que el documento que se esta enviando sea el correcto
-    let layouts = this.setProdOrTestLayouts();
+    let layouts = await this.setProdOrTestLayouts();
     let selectedLayoutName = layouts[selectedLayout].label.toLowerCase();
     fileName = fileName.toLowerCase()
     if(fileName.includes(selectedLayoutName)){
@@ -149,10 +152,12 @@ class Data extends Component {
 
 executeFile(file){
   //Ejecuta el codigo que segmenta los tickets
+  
   Papa.parse(file, {
     header: true,
     dynamicTyping: true,
     complete: (results) => {
+      console.log("este es el valor de results", results)
       this.bulks = utils.chunkArray(results.data, 50)
       this.setState({bulksTotal: this.bulks.length,firstAlertHide: false, csvHeader : results.meta['fields']})
       this.processData();
@@ -162,6 +167,9 @@ executeFile(file){
 }
 
   async processData() {
+
+
+
     var new_this = this;
     let {countNotification} = this.state
     this.setState({loading: true, show: false})
@@ -197,58 +205,90 @@ executeFile(file){
       let assignee_id = "";
       let ticket_form_id = ""; 
       let header = this.state.csvHeader;
+      let type = "";
+      let org_name="";
+
+      
+
       await Promise.all(propertyValues.map( async (element, index) => {
       let resp = await this.convertToTheRealData(this.state.selectedLayout, index+1, element)
 
         if (resp != null) {
+          // resp.type == 0 && (type = resp.val);
           resp.type == 1 && customfields.push(resp.val);
           resp.type == 2 && (status = resp.val);
           resp.type == 3 && (requester_id = resp.val.value);
           resp.type == 5 && (assignee_id = resp.val.value);
+          resp.type == 6 && (org_name= resp.val.value);
         }
+
         dataForComment = dataForComment + "\n" + header[index] +": "+ element;
     }));
 
-      if(status){
-        status = this.newStatus(status.value);}
-        else{
-        let defaultStatus = this.getGenericStatus(this.state.selectedLayout);
-        if(defaultStatus){
-          status = defaultStatus;
-        }else{
-          status = "closed"
+      type = await this.getGenerictype(this.state.selectedLayout);
+      this.setState({type})
+
+      let ticket_obj;
+      console.log("el type es: ", type)
+      if(type=="tickets"){
+        if(status){
+          status = this.newStatus(status.value);}
+          else{
+          let defaultStatus =await this.getGenericStatus(this.state.selectedLayout);
+          if(defaultStatus){
+            status = defaultStatus;
+          }else{
+            status = "closed"
+          }
+        }
+
+
+        let processName = "generic data";
+        processName = await this.getProcessName(this.state.selectedLayout);  
+        if(propertyValues[0] != null){
+          if((typeof(propertyValues[0])!="number" && propertyValues[0].trim()!="")||propertyValues.length !=1){
+
+          ticket_obj = {
+            subject: processName,
+            comment: {
+              "body": "Ticket creado por medio de app de importación" + dataForComment,
+              "is_public": false
+            },
+            custom_fields: customfields
+          };
+          ticket_obj.group_id = await this.getGroupId(this.state.selectedLayout);
+          ticket_obj.status = status;
+          ticket_form_id = await this.getProcessForm(this.state.selectedLayout);
+          (ticket_form_id!= ""&&ticket_form_id !=null )&& (ticket_obj.ticket_form_id = ticket_form_id);
+          requester_id != "" && (ticket_obj.requester_id = requester_id);
+          assignee_id != "" && (ticket_obj.assignee_id = assignee_id);
         }
       }
-
-
-      let processName = this.getProcessName(this.state.selectedLayout);
-      if(propertyValues[0] != null){
-        console.log(propertyValues);
-        console.log(typeof(propertyValues[0]));
-        if((typeof(propertyValues[0])!="number" && propertyValues[0].trim()!="")||propertyValues.length !=1){
-
-        let ticket_obj = {
-          subject: processName,
-          comment: {
-            "body": "Ticket creado por medio de app de importación" + dataForComment,
-            "is_public": false
-          },
-          custom_fields: customfields
+      }else if(type=="organizations"){
+        let newCustom= new Object;
+        customfields.forEach(val => {
+          newCustom[val.id] = val.value
+        });
+        ticket_obj = {
+          name: org_name,
+          organization_fields: newCustom
         };
+      }else{
+        console.log("151 Bueno no entre a ninguno")
+      }
+
         ticket_obj.tags= ["app_imp"];
-        ticket_obj.group_id = this.getGroupId(this.state.selectedLayout);
-        ticket_obj.status = status;
-        ticket_form_id = this.getProcessForm(this.state.selectedLayout);
-        (ticket_form_id!= ""&&ticket_form_id !=null )&& (ticket_obj.ticket_form_id = ticket_form_id);
-        requester_id != "" && (ticket_obj.requester_id = requester_id);
-        assignee_id != "" && (ticket_obj.assignee_id = assignee_id);
         allTicketsUpdate.push(ticket_obj);
         
-      }
-    }
+    
       })).then(function() {
         const {client} = new_this.state;
-        sendTicketsZendesk(allTicketsUpdate, client);
+        console.warn("valor a enviar",new_this.state.type, allTicketsUpdate);
+        if(new_this.state.type == "tickets"){
+          sendTicketsZendesk(allTicketsUpdate, client);
+        }else if(new_this.state.type == "organizations"){
+          sendOrganizationsZendesk(allTicketsUpdate, client);
+        }
         countNotification += 1
         new_this.setState({countNotification})
     
@@ -262,8 +302,8 @@ executeFile(file){
 
   }
 
-  fillDropdown() {
-    let data = this.setProdOrTestLayouts();
+async fillDropdown() {
+    let data = await this.setProdOrTestLayouts();
     let arrayData = Object.values(data);
     let array = [];
     arrayData.forEach(element => {
@@ -302,7 +342,7 @@ executeFile(file){
   async convertToTheRealData(method, this_counter, value) {
 
     const {client} = this.props;
-    let layouts = this.setProdOrTestLayouts();
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method][this_counter] != null) {
       if (layouts[method][this_counter].val) {
         return {
@@ -315,6 +355,14 @@ executeFile(file){
       } else if (layouts[method][this_counter].status) {
         return {
           type: 2,
+          val: {
+            id: layouts[method][this_counter].val,
+            value: value
+          }
+        };
+      }else if (layouts[method][this_counter].org_name) {
+        return {
+          type: 6,
           val: {
             id: layouts[method][this_counter].val,
             value: value
@@ -348,32 +396,40 @@ executeFile(file){
       return null;
     }
   }
-  getProcessName(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getProcessName(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].label) {
       return layouts[method].label;
     } else {
       return null;
     }
   }
-  getProcessForm(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getProcessForm(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].ticket_form_id) {
       return layouts[method].ticket_form_id;
     } else {
       return null;
     }
   }
-  getGenericStatus(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getGenericStatus(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].status) {
       return layouts[method].status;
     } else {
       return null;
     }
   }
-  getGroupId(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getGenerictype(method) {
+    let layouts = await this.setProdOrTestLayouts();
+    if (layouts[method].type) {
+      return layouts[method].type;
+    } else {
+      return null;
+    }
+  }
+  async getGroupId(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].group) {
       return layouts[method].group;
     } else {
@@ -382,7 +438,7 @@ executeFile(file){
   }
 
   async groupIdByName(name){
-
+   const client = this.props.client;
    return await userDataZendesk(name, client,2)
   }
 
@@ -434,17 +490,7 @@ modalShow(file){
         <div>
 
 
-          <div className='c-callout c-callout--warning' hidden={this.state.firstAlertHide}>
-          <strong className='c-callout__title'>
-            {/* <span dir='ltr'>Recuerda que:</span> */}
-          </strong>
-          <p className='c-callout__paragraph'>
-            La actualización de tickets requiere que la aplicación se encuentre 
-            abierta. Si cierras la aplicación se perderán los datos o procesos
-            que estén en ejecución.
-          </p>
-        </div>
-        <br></br>
+         
         <div id="modal"></div>
 
 

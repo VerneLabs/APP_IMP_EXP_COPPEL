@@ -19,7 +19,7 @@ nf start
 zat package --path=./dist
 ```
 
-##Aplicación Erpco ADO, Estructura de Archivos
+##Aplicación de importacion exportacion Coppel
 1. La carpeta Dist contiene el compilado de la app
 2. Src contiene images, javascripts, styleshees y templates
 
