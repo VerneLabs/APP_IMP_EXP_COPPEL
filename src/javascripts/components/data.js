@@ -6,8 +6,6 @@ import {Button} from '@zendeskgarden/react-buttons';
 import {Grid, Row, Col} from '@zendeskgarden/react-grid';
 import { Title,Alert } from '@zendeskgarden/react-notifications'
 import Loader from './loader';
-import Layouts_ids from '../../../dist/assets/catalogs/layouts_fields_ids';
-import Layouts_ids_test from '../../../dist/assets/catalogs/layouts_fields_ids_tests';
 import sendTicketsZendesk from '../../utils/sendsTicketsZendesk';
 import sendOrganizationsZendesk from '../../utils/sendOrganizationsZendesk';
 import userDataZendesk from '../../utils/userDataZendesk';
@@ -48,12 +46,15 @@ class Data extends Component {
       console.log("saliendo de la app");
     });
   }
-  setProdOrTestLayouts(){
-    if (this.state.prod) {
-      return Layouts_ids;
-    } else {
-      return Layouts_ids_test
-    }
+  async setProdOrTestLayouts(){
+    let client = this.props.client;
+    let metadata = await client.metadata(); //obtiene metadata de configuración de app del manifest.json
+    let baseParams = metadata.settings; //metadata guardado en la variable baseParams
+    let data;
+    let path = String(baseParams.layout);
+    data = await import('../../../dist/assets/catalogs/'+path);
+    // return Layouts_ids;
+    return data
   }
 
   changeSelect(e) {
@@ -136,10 +137,10 @@ class Data extends Component {
     }
   }
 
-  checkIfIsCorrectFile(fileName, selectedLayout){
+  async checkIfIsCorrectFile(fileName, selectedLayout){
 
   // Se revisa si el nombre del archivo tiene nombre parecido a lo que se espera, esto para estar seguro de que el documento que se esta enviando sea el correcto
-    let layouts = this.setProdOrTestLayouts();
+    let layouts = await this.setProdOrTestLayouts();
     let selectedLayoutName = layouts[selectedLayout].label.toLowerCase();
     fileName = fileName.toLowerCase()
     if(fileName.includes(selectedLayoutName)){
@@ -224,18 +225,16 @@ executeFile(file){
         dataForComment = dataForComment + "\n" + header[index] +": "+ element;
     }));
 
-      type = this.getGenerictype(this.state.selectedLayout);
+      type = await this.getGenerictype(this.state.selectedLayout);
       this.setState({type})
 
       let ticket_obj;
       console.log("el type es: ", type)
       if(type=="tickets"){
-        console.log("151 Entre a set Tickets ");
-
         if(status){
           status = this.newStatus(status.value);}
           else{
-          let defaultStatus = this.getGenericStatus(this.state.selectedLayout);
+          let defaultStatus =await this.getGenericStatus(this.state.selectedLayout);
           if(defaultStatus){
             status = defaultStatus;
           }else{
@@ -244,10 +243,9 @@ executeFile(file){
         }
 
 
-        let processName = this.getProcessName(this.state.selectedLayout);
+        let processName = "generic data";
+        processName = await this.getProcessName(this.state.selectedLayout);  
         if(propertyValues[0] != null){
-          console.log(propertyValues);
-          console.log(typeof(propertyValues[0]));
           if((typeof(propertyValues[0])!="number" && propertyValues[0].trim()!="")||propertyValues.length !=1){
 
           ticket_obj = {
@@ -258,31 +256,23 @@ executeFile(file){
             },
             custom_fields: customfields
           };
-          ticket_obj.group_id = this.getGroupId(this.state.selectedLayout);
+          ticket_obj.group_id = await this.getGroupId(this.state.selectedLayout);
           ticket_obj.status = status;
-          ticket_form_id = this.getProcessForm(this.state.selectedLayout);
+          ticket_form_id = await this.getProcessForm(this.state.selectedLayout);
           (ticket_form_id!= ""&&ticket_form_id !=null )&& (ticket_obj.ticket_form_id = ticket_form_id);
           requester_id != "" && (ticket_obj.requester_id = requester_id);
           assignee_id != "" && (ticket_obj.assignee_id = assignee_id);
         }
       }
       }else if(type=="organizations"){
-        console.log("151 Entre a set organizacion ");
         let newCustom= new Object;
-        // for(var val in customfields){
-        //   console.log("val", val );
-        //   newCustom[val.id] = val.value
-        // }
         customfields.forEach(val => {
           newCustom[val.id] = val.value
         });
-
         ticket_obj = {
           name: org_name,
-         
           organization_fields: newCustom
         };
-        console.log("customFields",newCustom);
       }else{
         console.log("151 Bueno no entre a ninguno")
       }
@@ -312,8 +302,8 @@ executeFile(file){
 
   }
 
-  fillDropdown() {
-    let data = this.setProdOrTestLayouts();
+async fillDropdown() {
+    let data = await this.setProdOrTestLayouts();
     let arrayData = Object.values(data);
     let array = [];
     arrayData.forEach(element => {
@@ -352,16 +342,7 @@ executeFile(file){
   async convertToTheRealData(method, this_counter, value) {
 
     const {client} = this.props;
-    let layouts = this.setProdOrTestLayouts();
-    // if (layouts[method][this_counter].type) {
-    //   return {
-    //     type: 0,
-    //     val: {
-    //       id: layouts[method][this_counter].val,
-    //       value: value
-    //     }
-    //   }
-    // }else
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method][this_counter] != null) {
       if (layouts[method][this_counter].val) {
         return {
@@ -415,40 +396,40 @@ executeFile(file){
       return null;
     }
   }
-  getProcessName(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getProcessName(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].label) {
       return layouts[method].label;
     } else {
       return null;
     }
   }
-  getProcessForm(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getProcessForm(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].ticket_form_id) {
       return layouts[method].ticket_form_id;
     } else {
       return null;
     }
   }
-  getGenericStatus(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getGenericStatus(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].status) {
       return layouts[method].status;
     } else {
       return null;
     }
   }
-  getGenerictype(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getGenerictype(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].type) {
       return layouts[method].type;
     } else {
       return null;
     }
   }
-  getGroupId(method) {
-    let layouts = this.setProdOrTestLayouts();
+  async getGroupId(method) {
+    let layouts = await this.setProdOrTestLayouts();
     if (layouts[method].group) {
       return layouts[method].group;
     } else {
@@ -457,7 +438,7 @@ executeFile(file){
   }
 
   async groupIdByName(name){
-
+   const client = this.props.client;
    return await userDataZendesk(name, client,2)
   }
 

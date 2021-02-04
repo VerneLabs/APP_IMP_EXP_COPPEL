@@ -6,8 +6,6 @@ import {Button} from '@zendeskgarden/react-buttons';
 import {Grid, Row, Col} from '@zendeskgarden/react-grid';
 import {Title, Alert} from '@zendeskgarden/react-notifications'
 import Loader from './loader';
-import Layouts_ids from '../../../dist/assets/catalogs/layouts_fields_ids';
-import Layouts_ids_test from '../../../dist/assets/catalogs/layouts_fields_ids_tests';
 import sendTicketsZendesk from '../../utils/sendsTicketsZendesk';
 import userDataZendesk from '../../utils/userDataZendesk';
 import searchZendesk from '../../utils/searchZendesk';
@@ -15,14 +13,12 @@ import {Field, Label, Radio, Input, Checkbox} from '@zendeskgarden/react-forms';
 import '@zendeskgarden/react-theming';
 import '@zendeskgarden/css-callouts';
 import '@zendeskgarden/css-forms';
-import {ThemeProvider} from '@zendeskgarden/react-theming';
-import {Accordion, Stepper} from '@zendeskgarden/react-accordions';
-import { CSVLink, CSVDownload } from "react-csv";
-import { Datepicker, DatepickerRange } from '@zendeskgarden/react-datepickers';
+import { Stepper} from '@zendeskgarden/react-accordions';
+import { CSVLink } from "react-csv";
+import { Datepicker } from '@zendeskgarden/react-datepickers';
 import moment from 'moment';
 
 import {Modal, Header, Body, Footer, FooterItem} from '@zendeskgarden/react-modals';
-import { element } from "prop-types";
 
 class Export extends Component {
   constructor(props) {
@@ -59,13 +55,6 @@ class Export extends Component {
     client.on('pane.deactivated', function () {
       console.log("saliendo de la app");
     });
-  }
-  setProdOrTestLayouts() {
-    if (this.state.prod) {
-      return Layouts_ids;
-    } else {
-      return Layouts_ids_test
-    }
   }
 
   changeSelect(e) {
@@ -151,22 +140,6 @@ class Export extends Component {
     }
   }
 
-  checkIfIsCorrectFile(fileName, selectedLayout) {
-
-    // Se revisa si el nombre del archivo tiene nombre parecido a lo que se espera,
-    // esto para estar seguro de que el documento que se esta enviando sea el
-    // correcto
-    let layouts = this.setProdOrTestLayouts();
-    let selectedLayoutName = layouts[selectedLayout]
-      .label
-      .toLowerCase();
-    fileName = fileName.toLowerCase()
-    if (fileName.includes(selectedLayoutName)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   executeFile(file) {
     //Ejecuta el codigo que segmenta los tickets
@@ -281,32 +254,6 @@ class Export extends Component {
 
   }
 
-  fillDropdown() {
-    let data = this.setProdOrTestLayouts();
-    let arrayData = Object.values(data);
-    let array = [];
-    arrayData.forEach(element => {
-      let index = arrayData.indexOf(element) + 1;
-
-      array.push({id: index, val: element.label})
-    });
-
-    ReactDOM.render(
-      <select
-      id="dropdownType"
-      className="typedropodown m-elem"
-      defaultValue="0"
-      onChange={(e) => this.changeSelect(e)}>
-
-      <option value="0" disabled>Seleccione un Layout</option>
-      {array.map((val, i) => {
-        return (
-          <option key={i} value={val.id}>{val.val}</option>
-        )
-      })}
-    </select>, document.getElementById("selectDropdown"));
-  }
-
   newStatus(oldStatus) {
 
     if (oldStatus == "New") {
@@ -316,88 +263,8 @@ class Export extends Component {
 
   }
 
-  async convertToTheRealData(method, this_counter, value) {
-
-    const {client} = this.props;
-    let layouts = this.setProdOrTestLayouts();
-    if (layouts[method][this_counter] != null) {
-      if (layouts[method][this_counter].val) {
-        return {
-          type: 1,
-          val: {
-            id: layouts[method][this_counter].val,
-            value: value
-          }
-        };
-      } else if (layouts[method][this_counter].status) {
-        return {
-          type: 2,
-          val: {
-            id: layouts[method][this_counter].val,
-            value: value
-          }
-        };
-      } else if (layouts[method][this_counter].num_usr) {
-        return await userDataZendesk(value, client, 1).then(function (data) {
-          return {
-            type: 3,
-            val: {
-              value: data
-            }
-          }
-        });
-      } else if (layouts[method][this_counter].num_agent) {
-        return await userDataZendesk(value, client, 1).then(function (data) {
-          return {
-            type: 5,
-            val: {
-              value: data
-            }
-          }
-        });
-
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-  getProcessName(method) {
-    let layouts = this.setProdOrTestLayouts();
-    if (layouts[method].label) {
-      return layouts[method].label;
-    } else {
-      return null;
-    }
-  }
-  getProcessForm(method) {
-    let layouts = this.setProdOrTestLayouts();
-    if (layouts[method].ticket_form_id) {
-      return layouts[method].ticket_form_id;
-    } else {
-      return null;
-    }
-  }
-  getGenericStatus(method) {
-    let layouts = this.setProdOrTestLayouts();
-    if (layouts[method].status) {
-      return layouts[method].status;
-    } else {
-      return null;
-    }
-  }
-  getGroupId(method) {
-    let layouts = this.setProdOrTestLayouts();
-    if (layouts[method].group) {
-      return layouts[method].group;
-    } else {
-      return null;
-    }
-  }
-
   async groupIdByName(name) {
-
+    const client = this.props.client;
     return await userDataZendesk(name, client, 2)
   }
 
@@ -531,7 +398,7 @@ for (var key in datos) {
           ,document.getElementById("errors"));
       }else{
         this.setState({values, gotValues: true})
-
+        //En caso de utilizar CSVDownload colocar la siguientes lineas
         // ReactDOM.render(
         //   // <CSVDownload data={values} target="_blank" filename="my-file.csv" />
         //   <CSVLink data={values}>Download me</CSVLink>
@@ -574,8 +441,6 @@ for (var key in datos) {
       loading,
       bulksTotal,
       hasUpdated,
-      messageFile,
-      disableButton,
       countNotification
     } = this.state
 
@@ -584,18 +449,13 @@ for (var key in datos) {
         : null 
         return (
         <div>
-
           <div id="modal"></div>
-
           <Grid>
             <Row justifyContent="center">
               <Col md={8}>
                 <div className='c-callout u-p-sm'>
-
                   <label className="m-elem title u-pl u-pb-sm u-pt">Exportar data de Zendesk</label>
-
                   <hr></hr>
-
                   <Stepper activeIndex={this.state.step}>
                     <Stepper.Step key="step-1">
                       <Stepper.Label>Tipo de exportación</Stepper.Label>
@@ -657,16 +517,12 @@ for (var key in datos) {
                                 <Input />
                               </Datepicker>
                           </Field>
-                       
-                       
-                          
                           <Field>
                             <Label>Fecha fin de creación</Label>
                             <Datepicker value={this.state.endDate} onChange={selectedDate => {this.setDatesValues(selectedDate, 1)}} formatDate={date => this.formatDate(date)}>
                               <Input />
                             </Datepicker>
                           </Field>
-
                         <br></br>
                         <div className="buttonContainer" hidden={this.state.secondSectionHide}>
                           <Button isDanger onClick={() => this.onPrev()}>Volver</Button>
@@ -703,17 +559,11 @@ for (var key in datos) {
                   {/* <Button
                     isPrimary
                     onClick={() => (console.log(this.state))}>State</Button> */}
-
-                
-
-
                 <div id="errors"></div>
-
                 </div>
                 <br></br>
               </Col>
               <hr></hr>
-
               <Col md={8} textAlign={"center"} hidden={true}>
                 <div className='c-callout u-p-sm '>
                   <p className='u-m-xs'>Notificaciones</p>
@@ -739,7 +589,6 @@ for (var key in datos) {
 
                   {loader}
                   <div id="alerts"></div>
-
                 </div>
               </Col>
             </Row>

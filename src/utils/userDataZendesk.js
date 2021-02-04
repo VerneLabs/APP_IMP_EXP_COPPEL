@@ -33,24 +33,6 @@ async function searchUserbyExternalId (id, client) {
   });
 
 }
-async function searcGroup (id, client) {
-  const url = `/api/v2/groups.json`
-
-  let settings = {
-    url,
-    type: 'GET',
-    dataType: 'json',
-    contentType: 'application/json'
-  }
-
-
-  return client.request(settings).then(function(data) {
-   
-    console.log(data)
-  });
-
-}
-
 
 module.exports = userDataZendesk
 

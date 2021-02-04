@@ -34,32 +34,6 @@ async function searchZendesk (data, client, method) {
 }
 
 
-async function searchData (data, client) {
-  let type = data.type;
-  let init_date = data.init_date;
-  let end_date = data.end_date;
-
-  console.log("type", type);
-  console.log("init_date", init_date);
-  console.log("end_date", end_date);
-
-  const url = `/api/v2/search.json?query=type:${type} created>${init_date} created<${end_date}`
-  let settings = {
-    url,
-    type: 'GET',
-    dataType: 'json',
-    contentType: 'application/json'
-  }
-
-
-  return client.request(settings).then(function(data) {
- console.warn("valor de la respuesta", data);
-        return data.results
-      
-    
-  });
-
-}
 async function request (url, client) {
   console.log("Entre al request", url)
   let settings = {
@@ -104,24 +78,5 @@ async function searchUserbyExternalId (id, client) {
   });
 
 }
-async function searcGroup (id, client) {
-  const url = `/api/v2/groups.json`
-
-  let settings = {
-    url,
-    type: 'GET',
-    dataType: 'json',
-    contentType: 'application/json'
-  }
-
-
-  return client.request(settings).then(function(data) {
-   
-    console.log(data)
-  });
-
-}
-
-
 module.exports = searchZendesk
 
